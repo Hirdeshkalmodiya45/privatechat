@@ -26,6 +26,7 @@ function Logout() {
     logout();
   }, [navigate]);
 
-  return null; // No UI needed for logout
+  return null; 
+  
 }
 export default Logout;
