@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+const api=  import.meta.env.VITE_REACT_APP_API_URL;
 function ImageUpload() {
   const navigate = useNavigate();
   const [file, setFile] = useState(null);
@@ -17,7 +17,7 @@ function ImageUpload() {
     formData.append('image', file);
     formData.append('username', currentUser);       
     try {
-      const res = await axios.post('http://localhost:3000/upload', formData);
+      const res = await axios.post(`${api}upload`, formData);
      localStorage.setItem("profilepic", JSON.stringify(res.data.imageUrl));
     
       navigate("/"); // src path milega yaha

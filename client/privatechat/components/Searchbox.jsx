@@ -5,7 +5,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import Imageupload from "./Imageupload.jsx";
+
+const api=  import.meta.env.VITE_REACT_APP_API_URL;   
 function  Searchbox() {
+  
 const [showUpload, setShowUpload] = useState(false);
 const [showModal, setShowModal] = useState(false);
 
@@ -23,7 +26,7 @@ const [showModal, setShowModal] = useState(false);
     e.preventDefault();
     setMessage('');
     try {
-      const response = await fetch('http://localhost:3000/friends/search', {
+      const response = await fetch(`${api}friends/search`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -45,7 +48,7 @@ const [showModal, setShowModal] = useState(false);
 
   const handleAddFriend = async (userId) => {
     try {
-      const response = await fetch('http://localhost:3000/friends/add-friend', {
+      const response = await fetch(`${api}friends/add-friend`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

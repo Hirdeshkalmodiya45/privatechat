@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router();
 const axios = require("axios");
 const passport = require("passport");
-
+const { publicDecrypt } = require("crypto");
+const fs = require('fs');
 const apikey = 'fa7664588a844a28850ba11abfffcd3d';
 const User = require("../module/user");
 
@@ -56,7 +57,7 @@ router.post("/login", (req, res, next) => {
         if (err) {
             return res.status(500).json({ success: false, message: "Authentication error", error: err });
         }
-        if (!user) {
+        if (!user) {                
             return res.status(401).json({ success: false, message: "Invalid email or password" });
         }
         req.login(user, (err) => {
@@ -77,6 +78,42 @@ router.post("/logout", (req, res) => {
         res.clearCookie("connect.sid");
         res.json({ success: true, message: "Logout successful" });
     });
+});
+router.post('/upload', upload.single('image'), async(req, res) => {
+  const filePath = `/uploads/${req.file.filename}`;
+  // filePath ab public/uploads/filename.jpg ke format me hoga
+ 
+  const currentUser = req.body.username; // req.user se current user milta hai agar user login hai
+
+  if (!currentUser) {
+    console.log("No user is logged in");
+    return res.status(404).json({ message: "User not found" });
+  } 
+  // Fetch the user from the database and update imgurl
+  const user = await User.findOne({ username: currentUser });
+  // ya aap user ko req.user se bhi le sakte ho agar user login hai 
+  if (!user) {
+    return res.status(404).json({ message: "User not found in database" });
+  }
+  // Delete previous photo from public/uploads if exists and is not default
+  const prevImgUrl = user.imgurl;   
+  if (prevImgUrl && prevImgUrl.startsWith('/uploads/')) {
+    const prevFilePath = path.join(__dirname, 'public', prevImgUrl);
+    fs.unlink(prevFilePath, (err) => {
+      if (err) {
+        console.warn('Failed to delete previous image:', prevFilePath, err.message);
+      } else {
+        console.log('Deleted previous imag');
+      }
+    });
+  }
+  user.imgurl = filePath; // ya aap imgurl ko kisi aur field me bhi store kar sakte ho
+  await user.save();   
+
+  // Yaha aap user ki imgurl ko update kar rahe ho  
+  // Aap yeh path client ko bhej sakte ho ya database me save kar sakte ho
+
+  res.json({ imageUrl: filePath });
 });
 
 module.exports = router;

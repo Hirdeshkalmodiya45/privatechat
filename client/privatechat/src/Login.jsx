@@ -6,7 +6,7 @@ function Login() {
   const [username, setUsername] = useState('');
   
   const [password, setPassword] = useState('');
-
+const api=  import.meta.env.VITE_REACT_APP_API_URL;
   // Function to handle input changes
 const handleInputChange = (e) => {
   const { name, value } = e.target;
@@ -21,7 +21,7 @@ const handleSubmit = async (e) => {
   e.preventDefault();
   console.log('Form submitted:', { username ,password }); // Debugging line
   try {
-    const response = await fetch('http://localhost:3000/user/login', {
+    const response = await fetch(`${api}user/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -36,8 +36,10 @@ const handleSubmit = async (e) => {
       console.log('login:', data);
       localStorage.setItem('username', username);
       localStorage.setItem("currentUserId", data.user._id);
-      console.log('User ID stored in localStorage:', data.user._id);
-      localStorage.setItem('currentUser', JSON.stringify(data.user)); // Store user data in localStorage  
+      localStorage.setItem('currentUser', JSON.stringify(data.user));
+      localStorage.setItem('profilepic', JSON.stringify(data.user.imgurl));
+      alert( JSON.stringify(data.user.imgurl)); // Store profile picture URL
+       // Store user data in localStorage  
  // Store username in localStorage
       navigate('/'); // Redirect to login or home page
     } else {

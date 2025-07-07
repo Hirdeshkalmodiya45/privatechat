@@ -5,11 +5,11 @@ import { io } from 'socket.io-client';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGear } from '@fortawesome/free-solid-svg-icons';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';
-import Home from './home';
+import Home from './Home';
 import VoiceCall from './VoiceCall';
 const socket = io('http://localhost:3000', { withCredentials: true });
 import { useNavigate,useLocation } from 'react-router-dom';
-
+const api=  import.meta.env.VITE_REACT_APP_API_URL;
 function Chat() {
     const { id: fuser_id } = useParams();
     const [chatHistory, setChatHistory] = useState([]);
@@ -36,7 +36,7 @@ const chatEndRef = useRef(null);
     // Fetch logged-in user's ID once
   const fetchChatHistory = async () => {
             try {
-                const response = await fetch(`http://localhost:3000/chat/messages`, {
+                const response = await fetch(`${api}chat/messages`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ fuser_id }),
@@ -116,7 +116,7 @@ const handleSubmit = (e) => {
 
 // Function to give options for message deletion   
 const deleteMessageAll =async()=>{
-    const response = await fetch('http://localhost:3000/chat/deleteAll', {
+    const response = await fetch(`${api}chat/deleteAll`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ fuser_id }),

@@ -127,7 +127,7 @@ friends.sort((a, b) => {
   return new Date(b.lastMessagetime) - new Date(a.lastMessagetime);
 });
 
-console.log(friends); 
+
     res.json({ friends });
   } catch (error) {
     console.error("Error fetching friends:", error);
@@ -196,43 +196,11 @@ io.on("connection", (socket) => {
     console.log("User disconnected");
   });
 });
-
-
-
-app.post('/upload', upload.single('image'), async(req, res) => {
-  const filePath = `/uploads/${req.file.filename}`;
-  // filePath ab public/uploads/filename.jpg ke format me hoga
-  console.log("File uploaded successfully:", filePath); 
-  const currentUser = req.body.username; // req.user se current user milta hai agar user login hai
-
-  if (!currentUser) {
-    console.log("No user is logged in");
-    return res.status(404).json({ message: "User not found" });
-  } 
-  // Fetch the user from the database and update imgurl
-  const user = await User.findOne({ username: currentUser });
-  // ya aap user ko req.user se bhi le sakte ho agar user login hai 
-  if (!user) {
-    return res.status(404).json({ message: "User not found in database" });
-  }
-  user.imgurl = filePath; // ya aap imgurl ko kisi aur field me bhi store kar sakte ho
-  await user.save();   
-
-  // Yaha aap user ki imgurl ko update kar rahe ho  
-  // Aap yeh path client ko bhej sakte ho ya database me save kar sakte ho
-
-  res.json({ imageUrl: filePath });
-});
-
-
-
-
-
 // Replace app.listen with server.listen to support socket.io
 server.listen(port, () => {
   console.log(`🚀 Server running at http://localhost:${port}`);
 });
-
+  
 
 
 
@@ -246,6 +214,8 @@ const apikey ='fa7664588a844a28850ba11abfffcd3d';
 // Backend route: /check-email
 const user=require("./router/user");
 const chat = require("./router/chat");  
+const { publicDecrypt } = require("crypto");
+const fs = require('fs');
 app.use("/user", user); 
 app.use("/chat", chat);
 app.use("/friends", friendsRouter); // Use the friends router
